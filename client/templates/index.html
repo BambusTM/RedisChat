@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>Chat</h1>
+        <input id="username" placeholder="Username" />
+        <div id="chat"></div>
+        <input id="messageInput" placeholder="Type a message" />
+        <button id="sendBtn">Send</button>
+
+        <script>
+            let ws = new WebSocket(
+                "ws://" + window.location.hostname + ":8000/ws",
+            );
+            ws.onmessage = (event) => {
+                let chat = document.getElementById("chat");
+                let msg = document.createElement("div");
+                msg.textContent = event.data;
+                chat.appendChild(msg);
+            };
+
+            document.getElementById("sendBtn").onclick = () => {
+                let username =
+                    document.getElementById("username").value || "Anonymous";
+                let message = document.getElementById("messageInput").value;
+                if (message) ws.send(JSON.stringify({ username, message }));
+            };
+        </script>
+    </body>
+</html>
